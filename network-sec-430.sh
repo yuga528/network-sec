@@ -39,7 +39,7 @@ if [[ "$status" -ne "0" ]] ; then
         echo "Network doesn't exist"
         exit 1
 else 
-	echo "Network $network is exist"
+	echo "Network $network exists"
 fi
 
 gcloud compute networks subnets list | egrep --word-regexp $subNetwork &> /dev/null
@@ -48,7 +48,7 @@ if [[ "$status" -ne "0" ]] ; then
         echo "Subnetwork doesn't exist"
         exit 1
 else 
-	echo "Subnetwork $subNetwork is exist"
+	echo "Subnetwork $subNetwork exists"
 fi
 
 echo "---------------------------------------------------"
@@ -58,7 +58,7 @@ status=`echo $?`
 if [[ "$status" -ne "0" ]]; then 
 	echo "Firewall rule $firewallRule1 for ingress doesn't exist"
 else 
-	echo "Firewall rule $firewallRule1 for ingress exist"
+	echo "Firewall rule $firewallRule1 for ingress exists"
 	rules=$(gcloud compute firewall-rules list --format="table(network, sourceTags.list(), targetTags, 
 	      allowed[].map().firewall_rule().list():label=ALLOW)" --filter="name=$firewallRule1" | grep -v NETWORK)
 	net=$(echo $rules | awk '{print $1}')
@@ -100,11 +100,11 @@ fi
 echo "---------------------------------------------------"
 
 gcloud compute firewall-rules describe $firewallRule2 &> /dev/null
-statu=`echo $?`
+status=`echo $?`
 if [[ "$status" -ne "0" ]]; then
         echo "Firewall rule $firewallRule2 for ingress doesn't exist"
 else
-        echo "Firewall rule $firewallRule2 for ingress exist"
+        echo "Firewall rule $firewallRule2 for ingress exists"
         rules=$(gcloud compute firewall-rules list --format="table(network, sourceRanges.list(), targetTags,
               allowed[].map().firewall_rule().list():label=ALLOW)" --filter="name=$firewallRule2" | grep -v NETWORK)
         net=$(echo $rules | awk '{print $1}')
@@ -150,7 +150,7 @@ status=`echo $?`
 if [[ "$status" -ne "0" ]]; then
 	echo "Firewall rule $firewallRule3 for ingress doesn't exist"
 else
-	echo "Firewall rule $firewallRule3 for ingress exist"
+	echo "Firewall rule $firewallRule3 for ingress exists"
 	rules=$(gcloud compute firewall-rules list --format="table(network, sourceTags.list(), targetTags,
               allowed[].map().firewall_rule().list():label=ALLOW)" --filter="name=$firewallRule3" | grep -v NETWORK)
 	net=$(echo $rules | awk '{print $1}')
@@ -193,11 +193,11 @@ fi
 echo "---------------------------------------------------"
 
 gcloud compute firewall-rules describe $firewallRule4 &> /dev/null
-statu=`echo $?`
+status=`echo $?`
 if [[ "$status" -ne "0" ]]; then
         echo "Firewall rule $firewallRule4 for ingress doesn't exist"
 else
-        echo "Firewall rule $firewallRule4 for ingress exist"
+        echo "Firewall rule $firewallRule4 for ingress exists"
 	rules=$(gcloud compute firewall-rules list --format="table(network, sourceRanges.list(), targetServiceAccounts.list(),
               allowed[].map().firewall_rule().list():label=ALLOW)" --filter="name=$firewallRule4" | grep -v NETWORK)
 	net=$(echo $rules | awk '{print $1}')
@@ -239,10 +239,11 @@ fi
 echo "---------------------------------------------------"
 
 gcloud compute firewall-rules describe $firewallRule5 &> /dev/null
+status=`echo $?`
 if [[ "$status" -ne "0" ]]; then
         echo "Firewall rule $firewallRule5 for egress doesn't exist"
 else
-        echo "Firewall rule $firewallRule5 for egress exist"
+        echo "Firewall rule $firewallRule5 for egress exists"
 	rules=$(gcloud compute firewall-rules list --format="table(network, targetTags.list():label=TARGET_TAGS,
 	      destinationRanges.list():label=DEST_RANGES, denied[].map().firewall_rule().list():label=DENY)" --filter="name=$firewallRule5" | grep -v NETWORK)
 	net=$(echo $rules | awk '{print $1}')
@@ -259,7 +260,7 @@ else
 		echo "Found target tag is $target"
                 echo "Target tag is not nat-vm"
         fi
-	dest_range=$(echo $rules | cut -d " " -f 7)
+	dest_range=$(echo $rules | awk {'print $3'})
         if [[ $dest_range == "0.0.0.0/0" ]] ; then
                 echo "Destination Range is 0.0.0.0/0"
         else
@@ -279,11 +280,11 @@ fi
 echo "---------------------------------------------------"
 
 gcloud compute routes describe $routes &> /dev/null
-statu=`echo $?`
+status=`echo $?`
 if [[ "$status" -ne "0" ]]; then
         echo "Router $routes doesn't exist"
 else
-	echo "Router $routes exist"
+	echo "Router $routes exists"
 	routes=$(gcloud compute routes list --format="table(network, destRange, nextHopInstance, tags, priority )" --filter="name=$routes" | grep -v NETWORK)
 	net=$(echo $rules | awk '{print $1}')
         if [[ $net == "stanford-odysseus-net" ]]; then
